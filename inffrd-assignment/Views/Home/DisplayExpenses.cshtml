@@ -1,0 +1,99 @@
+﻿@model IEnumerable<Category>
+@{
+    ViewData["Title"] = "DisplayExpenses";
+    decimal before2018 = 0, after2020 = 0, col2 = 0, col3 = 0, col4 = 0, total = 0;
+}
+<style type="text/css">
+    td {
+        text-align: left;
+        width: 200px;
+    }
+</style>
+<h1>DisplayExpenses</h1>
+
+<div class="text-center">
+    <table>
+
+        <tr>
+            <td> Category/Year</td>
+            <td>Before 2018 </td>
+            <td> 2018</td>
+            <td> 2019</td>
+            <td> 2020</td>
+            <td> After 2020</td>
+            <td> Total</td>
+        </tr>
+
+        @foreach (var x in Model)
+        {
+             before2018 = 0; after2020 = 0; col2 = 0; col3 = 0; col4 = 0; total = 0; 
+
+            @foreach (var exp in x.Expenses)
+            {
+                if (x != null)
+                {
+                    DateTime dt = Convert.ToDateTime(exp.Year);
+                    if (dt.Year < 2018)
+                    {
+                        { before2018 += Convert.ToDecimal(exp.Amount); }
+
+                    }
+
+                    if (dt.Year == 2018)
+                    {
+                        { col2 += Convert.ToDecimal(exp.Amount); }
+
+                    }
+                    if (dt.Year == 2019)
+                    {
+                        { col3 += Convert.ToDecimal(exp.Amount); }
+
+                    }
+                    if (dt.Year == 2020)
+                    {
+                        { col4 += Convert.ToDecimal(exp.Amount); }
+
+                    }
+                    if (dt.Year > 2020)
+                    {
+                        { after2020 += Convert.ToDecimal(exp.Amount); }
+
+                    }
+
+                    { total += Convert.ToDecimal(exp.Amount); }
+                }
+
+            }
+    <tr>
+        <td>@x.Name </td>
+        @if (x.Expenses.Count > 0)
+        {
+            <td>@before2018 </td>
+            <td>@col2 </td>
+            <td>@col3 </td>
+            <td>@col4 </td>
+            <td>@after2020 </td>
+            <td>@total </td>
+        }
+        else
+        {
+            <td>0 </td>
+            <td>0 </td>
+            <td>0</td>
+            <td>0</td>
+            <td>0 </td>
+            <td> 0</td>
+
+        }
+
+    </tr>
+
+        }
+
+
+    </table>
+
+    <br />
+    <br />
+
+</div>

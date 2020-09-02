@@ -1,0 +1,162 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+</div>
+
+<link href="~/css/Signup.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+
+<link href="~/css/Signup.css" rel="stylesheet" />
+<h2> Add Information</h2>
+
+<button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Add Record</button>
+
+<div id="id01" class="modal">
+    <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+    <div class="modal-content">
+        <div class="container">
+            <label for="category"><b>Select Category</b></label>
+            <select id="Category" class="form-control"></select>
+
+            <br />
+            <hr />
+            <label for="Year"><b>Select Year</b></label>
+            <select name="Year" id="Year">
+                <option value="-1">Select</option>
+                <option value="0">2015</option>
+                <option value="1">2016</option>
+                <option value="2">2017</option>
+                <option value="3">2018</option>
+                <option value="4">2019</option>
+                <option value="5">2020</option>
+                <option value="5">2021</option>                
+            </select>
+            <hr />
+           
+            <label for="temperature"><b>Amount</b></label>
+            <input type="text" placeholder="" id="amount" onkeypress="return validate(event)" name="amount" required>
+
+
+            <div class="clearfix">
+                <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+                <button type="submit" id="SignUp" class="signupbtn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+@*<script src="https://code.jquery.com/jquery-3.3.1.js"></script>*@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+        bindCategory();
+    });
+    function bindCategory() {
+        $.getJSON("/Home/GetAllCategory", function (d) {
+            var item = '';
+            var markup = "<option value='0'>--Select Brand--</option>";
+            
+            $.each(d.data, function (i, item) {
+                markup += "<option value=" + item.id + ">" + item.name + "</option>";
+            });
+            $('#Category').html(markup).show();
+        });
+    }
+    // Get the modal
+    var modal = document.getElementById('id01');
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+    
+
+    $("#SignUp").click(function () {
+        AddRecord();
+    });
+
+    function AddRecord() {
+        var e = document.getElementById("Year");       
+      
+            if ($("#amount").val() == "") {
+                alert("Amount Can not be blank");
+                return;
+            }
+            if ($("#Year").val() < 0) {
+                alert("Please select a valid Year");
+                return;
+            }
+            if ($("#Category").val() == 0) {
+                alert("Please select Category");
+                return;
+            }
+
+            var model = {
+                CategoryId: $("#Category").val(),
+                Year:"01-"+"01-"+ e.options[e.selectedIndex].text,
+                Amount: $("#amount").val()             
+
+            };
+            $.ajax({
+                cache: false,
+                async: false,
+                type: 'POST',
+                dataType: 'JSON',
+                data: model,               
+                url: '/home/SaveDetails',
+                success: function (result) {
+                    if (result.id > 0) {
+                        alert("Details saved successfully");
+                        document.getElementById('id01').style.display = 'none';
+                        clear();
+                        location.reload();
+                    } else {
+                        alert("Unable to save details, try after some time");
+                    }
+                   
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                    alert(errorThrown);
+                },
+                complete: function (xhr, status) {
+                }
+            });
+       
+    }
+    function clear() {
+        $("#Category").val(0);
+        $("#Year").val(0);
+        $("#amount").val('');
+    }
+
+    function validate(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if (charCode != 46 && charCode > 31
+            && (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+</script>
+
+<script>
+    // Get the modal
+    var modal = document.getElementById('id01');
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+</script>
